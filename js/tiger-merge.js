@@ -3,13 +3,13 @@ class TigerMergeGame {
     constructor() {
         this.gameArea = document.getElementById('gameArea');
         this.previewBall = document.getElementById('previewBall');
-        this.scoreElement = document.getElementById('score');
+        this.timeElement = document.getElementById('time');
         this.nextItemElement = document.getElementById('nextItem');
         this.startBtn = document.getElementById('startBtn');
         this.pauseBtn = document.getElementById('pauseBtn');
         this.resetBtn = document.getElementById('resetBtn');
         this.gameOverElement = document.getElementById('gameOver');
-        this.finalScoreElement = document.getElementById('finalScore');
+        this.finalTimeElement = document.getElementById('finalTime');
         this.restartBtn = document.getElementById('restartBtn');
         this.toggleFullscreenBtn = document.getElementById('toggleFullscreen');
         
@@ -29,7 +29,7 @@ class TigerMergeGame {
         this.gameWidth = this.gameArea.offsetWidth;
         this.gameHeight = this.gameArea.offsetHeight;
         
-        this.score = 0;
+        this.elapsedTime = 0; // 游戏用时（秒）
         this.gameRunning = false;
         this.gamePaused = false;
         this.balls = [];
@@ -37,6 +37,8 @@ class TigerMergeGame {
         this.currentBall = null;
         this.animationId = null;
         this.isDragging = false; // 标记是否正在拖拽
+        this.lastTimestamp = 0; // 上一帧时间戳
+        this.timerInterval = null; // 计时器
         
         this.previewPosition = this.gameWidth / 2;
         this.previewBall.style.left = `${this.previewPosition}px`;
@@ -44,6 +46,7 @@ class TigerMergeGame {
         this.initEventListeners();
         this.updateNextItem();
         this.updatePreviewBall(); // 初始化预览球样式
+        this.updateTimeDisplay(); // 初始化时间显示
     }
     
     initEventListeners() {
@@ -117,14 +120,10 @@ class TigerMergeGame {
         // 创建新的球体
         this.createBall();
         
-        // 延迟0.5秒后再预览下一个球体
-        setTimeout(() => {
-            if (this.gameRunning && !this.gamePaused) {
-                this.nextItemType = Math.floor(Math.random() * 5); // 下一个球体类型为0-4级
-                this.updateNextItem();
-                this.updatePreviewBall();
-            }
-        }, 500);
+        // 立即生成下一个球体类型并更新预览
+        this.nextItemType = Math.floor(Math.random() * 5); // 下一个球体类型为0-4级
+        this.updateNextItem();
+        this.updatePreviewBall();
     }
     
     handleResize() {
@@ -147,6 +146,7 @@ class TigerMergeGame {
             this.gamePaused = false;
             this.startBtn.disabled = true;
             this.pauseBtn.disabled = false;
+            this.startTimer();
             this.updatePreviewBall(); // 显示预览球
             this.gameLoop();
         }
@@ -156,6 +156,12 @@ class TigerMergeGame {
         this.gamePaused = !this.gamePaused;
         this.pauseBtn.textContent = this.gamePaused ? '继续' : '暂停';
         this.previewBall.style.display = this.gamePaused ? 'none' : 'block';
+        
+        if (this.gamePaused) {
+            this.stopTimer();
+        } else {
+            this.startTimer();
+        }
     }
     
     resetGame() {
@@ -167,14 +173,17 @@ class TigerMergeGame {
         });
         
         this.balls = [];
-        this.score = 0;
+        this.elapsedTime = 0;
         this.nextItemType = Math.floor(Math.random() * 3);
         this.gameRunning = false;
         this.gamePaused = false;
         this.isDragging = false;
         
+        // 停止计时器
+        this.stopTimer();
+        
         // 更新UI
-        this.updateUI();
+        this.updateTimeDisplay();
         this.updateNextItem();
         this.updatePreviewBall();
         this.gameOverElement.style.display = 'none';
@@ -192,6 +201,27 @@ class TigerMergeGame {
     restartGame() {
         this.resetGame();
         this.startGame();
+    }
+    
+    startTimer() {
+        this.stopTimer(); // 确保没有重复的计时器
+        this.timerInterval = setInterval(() => {
+            this.elapsedTime++;
+            this.updateTimeDisplay();
+        }, 1000);
+    }
+    
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+    
+    updateTimeDisplay() {
+        const minutes = Math.floor(this.elapsedTime / 60).toString().padStart(2, '0');
+        const seconds = (this.elapsedTime % 60).toString().padStart(2, '0');
+        this.timeElement.textContent = `${minutes}:${seconds}`;
     }
     
     gameLoop() {
@@ -216,8 +246,8 @@ class TigerMergeGame {
         this.previewBall.textContent = this.items[this.nextItemType].name;
         this.previewBall.className = `preview-ball ${this.items[this.nextItemType].className}`;
         
-        // 根据类型计算半径（等级越高，半径越大）- 进一步增大尺寸
-        const radius = 30 + this.nextItemType * 12;
+        // 根据类型计算半径（等级越高，半径越大）- 缩小体积差距
+        const radius = 35 + this.nextItemType * 10;
         this.previewBall.style.width = `${radius * 2}px`;
         this.previewBall.style.height = `${radius * 2}px`;
         this.previewBall.style.fontSize = `${radius}px`;
@@ -230,8 +260,8 @@ class TigerMergeGame {
         ball.className = `game-ball ${this.items[this.nextItemType].className}`;
         ball.textContent = this.items[this.nextItemType].name;
         
-        // 根据类型计算半径（等级越高，半径越大）- 进一步增大尺寸
-        const radius = 30 + this.nextItemType * 12;
+        // 根据类型计算半径（等级越高，半径越大）- 缩小体积差距
+        const radius = 35 + this.nextItemType * 10;
         const x = this.previewPosition;
         const y = radius + 5; // 从预览线下方开始
         
@@ -251,9 +281,10 @@ class TigerMergeGame {
             y: y,
             radius: radius,
             type: this.nextItemType,
-            velocityX: 0,
-            velocityY: 0,
-            isResting: false
+            velocityX: 0,     // 确保初始速度为0
+            velocityY: 0,     // 确保初始速度为0
+            isResting: false,
+            isMerging: false  // 确保初始不处于合并状态
         });
     }
     
@@ -406,8 +437,8 @@ class TigerMergeGame {
         newBall.className = `game-ball ${this.items[newType].className} merge-animation`;
         newBall.textContent = this.items[newType].name;
         
-        // 根据类型计算半径（等级越高，半径越大）- 进一步增大尺寸
-        const radius = 30 + newType * 12;
+        // 根据类型计算半径（等级越高，半径越大）- 缩小体积差距
+        const radius = 35 + newType * 10;
         
         newBall.style.width = `${radius * 2}px`;
         newBall.style.height = `${radius * 2}px`;
@@ -431,10 +462,6 @@ class TigerMergeGame {
             isMerging: false
         });
         
-        // 增加分数
-        this.score += newType * 10;
-        this.updateUI();
-        
         // 移除动画类名
         setTimeout(() => {
             newBall.classList.remove('merge-animation');
@@ -453,11 +480,17 @@ class TigerMergeGame {
     
     winGame() {
         this.gameRunning = false;
+        this.stopTimer();
+        
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
         }
         
-        this.finalScoreElement.textContent = this.score;
+        // 显示最终用时
+        const minutes = Math.floor(this.elapsedTime / 60).toString().padStart(2, '0');
+        const seconds = (this.elapsedTime % 60).toString().padStart(2, '0');
+        this.finalTimeElement.textContent = `${minutes}:${seconds}`;
+        
         this.gameOverElement.style.display = 'block';
         this.startBtn.disabled = false;
         this.pauseBtn.disabled = true;
@@ -466,10 +499,6 @@ class TigerMergeGame {
     updateNextItem() {
         this.nextItemElement.textContent = this.items[this.nextItemType].name;
         this.nextItemElement.className = this.items[this.nextItemType].className;
-    }
-    
-    updateUI() {
-        this.scoreElement.textContent = this.score;
     }
     
     toggleFullscreen() {
