@@ -1,0 +1,106 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排球裁判辅助工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <h1>排球裁判辅助工具</h1>
+    </header>
+
+    <main>
+        <!-- 比分板 -->
+        <section class="scoreboard">
+            <div class="team home-team">
+                <h2>主队</h2>
+                <div class="score" id="homeScore">0</div>
+                <div class="controls">
+                    <button class="btn add-point" data-team="home">+1分</button>
+                    <button class="btn subtract-point" data-team="home">-1分</button>
+                </div>
+            </div>
+            
+            <div class="set-info">
+                <div class="sets">
+                    <span>局数:</span>
+                    <span id="currentSet">1</span>
+                    <button class="btn" id="nextSet">下一局</button>
+                </div>
+                <div class="set-scores">
+                    <span>主队局分: <span id="homeSets">0</span></span>
+                    <span>客队局分: <span id="guestSets">0</span></span>
+                </div>
+            </div>
+            
+            <div class="team guest-team">
+                <h2>客队</h2>
+                <div class="score" id="guestScore">0</div>
+                <div class="controls">
+                    <button class="btn add-point" data-team="guest">+1分</button>
+                    <button class="btn subtract-point" data-team="guest">-1分</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 控制面板 -->
+        <section class="control-panel">
+            <div class="timer-section">
+                <h3>计时器</h3>
+                <div class="timer-display" id="timer">00:00</div>
+                <div class="timer-controls">
+                    <button class="btn" id="startTimer">开始</button>
+                    <button class="btn" id="pauseTimer">暂停</button>
+                    <button class="btn" id="resetTimer">重置</button>
+                </div>
+                <div class="preset-timers">
+                    <button class="btn preset" data-time="60">准备时间(60s)</button>
+                    <button class="btn preset" data-time="180">局间休息(3min)</button>
+                </div>
+            </div>
+
+            <div class="game-controls">
+                <h3>比赛控制</h3>
+                <div class="buttons-group">
+                    <button class="btn" id="timeoutHome">主队暂停</button>
+                    <button class="btn" id="timeoutGuest">客队暂停</button>
+                    <button class="btn" id="technicalTimeout">技术暂停</button>
+                </div>
+                <div class="timeout-counts">
+                    <span>主队暂停: <span id="homeTimeouts">0</span>/2</span>
+                    <span>客队暂停: <span id="guestTimeouts">0</span>/2</span>
+                </div>
+            </div>
+
+            <div class="misc-controls">
+                <h3>其他功能</h3>
+                <div class="buttons-group">
+                    <button class="btn" id="resetMatch">重置比赛</button>
+                    <button class="btn" id="switchSides">交换场地</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 规则参考 -->
+        <section class="rules-reference">
+            <h3>快速规则参考</h3>
+            <ul>
+                <li>每局25分，决胜局15分</li>
+                <li>每队每局最多2次暂停</li>
+                <li>技术暂停：领先8分或16分时自动触发</li>
+                <li>每局结束后交换场地</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>排球裁判辅助工具 &copy; 2023</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
