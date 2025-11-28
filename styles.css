@@ -15,19 +15,77 @@ body {
 header {
     background-color: #4a69bd;
     color: white;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 1rem;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 header h1 {
     font-size: 1.5rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.back-btn, .fullscreen-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.fullscreen-btn {
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 4px;
+}
+
+.fullscreen-btn:hover {
+    background-color: rgba(255,255,255,0.3);
 }
 
 main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
+}
+
+/* 工具卡片网格 */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.tool-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+}
+
+.tool-card h2 {
+    margin-bottom: 0.5rem;
+    color: #4a69bd;
+}
+
+.tool-card p {
+    margin-bottom: 1rem;
+    color: #6c757d;
+}
+
+.tool-icon {
+    font-size: 3rem;
 }
 
 /* 比分板样式 */
@@ -79,6 +137,11 @@ main {
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.3s ease;
+}
+
+.small-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
 }
 
 .btn:hover {
@@ -198,6 +261,101 @@ footer {
     margin-top: 2rem;
 }
 
+/* 全屏模式样式 */
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.fullscreen-header {
+    padding: 1rem;
+    text-align: right;
+}
+
+.exit-fullscreen {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.fullscreen-scoreboard {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 2rem;
+}
+
+.fullscreen-team {
+    text-align: center;
+    flex: 1;
+}
+
+.fullscreen-team-name {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.fullscreen-score {
+    font-size: 8rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.fullscreen-set-info {
+    text-align: center;
+    color: white;
+    padding: 1rem;
+}
+
+.fullscreen-current-set {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.fullscreen-set-score {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.fullscreen-controls {
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+}
+
+.fs-control-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fs-control-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .scoreboard {
@@ -231,6 +389,10 @@ footer {
     header h1 {
         font-size: 1.3rem;
     }
+    
+    .fullscreen-score {
+        font-size: 6rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -252,5 +414,22 @@ footer {
     
     .btn {
         width: 100%;
+    }
+    
+    .fullscreen-score {
+        font-size: 5rem;
+    }
+    
+    .fullscreen-team-name {
+        font-size: 1.5rem;
+    }
+    
+    .fullscreen-controls {
+        padding: 1rem;
+    }
+    
+    .fs-control-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.2rem;
     }
 }
