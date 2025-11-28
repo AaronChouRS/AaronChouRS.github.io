@@ -112,6 +112,10 @@ class TigerVolleyballGame {
         this.gameRunning = true;
         this.gamePaused = false;
         
+        // 重置老虎大小
+        this.tiger.style.fontSize = '3rem';
+        this.tigerWidth = this.tiger.offsetWidth;
+        
         // 更新UI
         this.updateUI();
         this.gameOverElement.style.display = 'none';
@@ -207,18 +211,8 @@ class TigerVolleyballGame {
                 ballRect.top < tigerRect.bottom &&
                 ballRect.bottom > tigerRect.top) {
                 
-                // 计算是否为完美接球（排球在老虎中心附近）
-                const tigerCenter = this.tigerPosition + this.tigerWidth / 2;
-                const ballCenter = ball.x + 15; // 排球中心
-                const distance = Math.abs(tigerCenter - ballCenter);
-                
-                let points = 1;
-                if (distance < this.tigerWidth / 6) { // 更严格的完美判定区域
-                    points = 5;
-                    this.showPerfectCatch(ball.x, ball.y);
-                } else {
-                    this.showNormalCatch(ball.x, ball.y);
-                }
+                // 接球反馈
+                this.showCatchFeedback(ball.x, ball.y);
                 
                 // 老虎接球动画
                 this.tiger.classList.add('catch');
@@ -231,13 +225,16 @@ class TigerVolleyballGame {
                 this.volleyballs.splice(i, 1);
                 
                 // 增加分数
-                this.score += points;
+                this.score += 1;
                 this.updateUI();
+                
+                // 更新老虎大小
+                this.updateTigerSize();
             }
         }
     }
     
-    showNormalCatch(x, y) {
+    showCatchFeedback(x, y) {
         const catchEffect = document.createElement('div');
         catchEffect.className = 'catch-feedback';
         catchEffect.textContent = '🏐';
@@ -255,40 +252,11 @@ class TigerVolleyballGame {
         }, 800);
     }
     
-    showPerfectCatch(x, y) {
-        // 显示排球图标动画
-        const catchEffect = document.createElement('div');
-        catchEffect.className = 'catch-feedback';
-        catchEffect.textContent = '🏐';
-        catchEffect.style.left = `${x}px`;
-        catchEffect.style.top = `${y}px`;
-        catchEffect.style.color = 'gold';
-        catchEffect.style.textShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
-        
-        this.gameArea.appendChild(catchEffect);
-        
-        // 1秒后移除动画元素
-        setTimeout(() => {
-            if (catchEffect.parentNode) {
-                catchEffect.parentNode.removeChild(catchEffect);
-            }
-        }, 800);
-        
-        // 显示"+5!"文字动画
-        const perfectText = document.createElement('div');
-        perfectText.className = 'perfect-catch';
-        perfectText.textContent = '+5!';
-        perfectText.style.left = `${x}px`;
-        perfectText.style.top = `${y - 30}px`;
-        
-        this.gameArea.appendChild(perfectText);
-        
-        // 1.5秒后移除动画文字
-        setTimeout(() => {
-            if (perfectText.parentNode) {
-                perfectText.parentNode.removeChild(perfectText);
-            }
-        }, 1500);
+    updateTigerSize() {
+        // 根据得分调整老虎大小，每10分增加0.2rem，最大5rem
+        const newSize = Math.min(3 + Math.floor(this.score / 10) * 0.2, 5);
+        this.tiger.style.fontSize = `${newSize}rem`;
+        this.tigerWidth = this.tiger.offsetWidth; // 更新老虎宽度
     }
     
     loseLife() {

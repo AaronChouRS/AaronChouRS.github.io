@@ -2,35 +2,41 @@
 
 .game-container {
     max-width: 100%;
-    height: calc(100vh - 120px);
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 .game-ui {
-    padding: 1rem;
+    padding: 0.5rem;
     background-color: #4a69bd;
     color: white;
+    flex-shrink: 0;
 }
 
 .game-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .game-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center;
     flex-grow: 1;
-    margin: 0 1rem;
+    margin: 0 0.5rem;
+}
+
+.back-btn, .fullscreen-btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
 }
 
 .game-stats {
     display: flex;
     justify-content: space-between;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
 }
 
@@ -62,11 +68,17 @@
 }
 
 .game-controls {
-    padding: 1rem;
+    padding: 0.5rem;
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.5rem;
     background-color: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.game-controls .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
 }
 
 .game-over {
@@ -75,25 +87,29 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 15px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     z-index: 100;
-    min-width: 250px;
+    min-width: 200px;
+    width: 80%;
+    max-width: 300px;
 }
 
 .game-over h2 {
     margin-bottom: 1rem;
     color: #4a69bd;
+    font-size: 1.5rem;
 }
 
 .game-instructions {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     text-align: center;
     background-color: #e9ecef;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #495057;
+    flex-shrink: 0;
 }
 
 /* 普通接球反馈动画 */
@@ -117,33 +133,6 @@
     }
 }
 
-/* 完美接球反馈动画 */
-.perfect-catch {
-    position: absolute;
-    color: gold;
-    font-weight: bold;
-    font-size: 1.5rem;
-    pointer-events: none;
-    z-index: 20;
-    animation: perfectCatchAnimation 1.5s forwards;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-}
-
-@keyframes perfectCatchAnimation {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translateY(-30px) scale(1.5);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-60px) scale(2);
-        opacity: 0;
-    }
-}
-
 /* 老虎接球动画 */
 .tiger.catch {
     animation: tigerCatch 0.3s ease;
@@ -158,11 +147,11 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
     .game-header h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .game-stats {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .tiger {
@@ -172,30 +161,73 @@
     .volleyball {
         font-size: 1.5rem;
     }
+    
+    .game-over {
+        padding: 1rem;
+        width: 85%;
+    }
+    
+    .game-over h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
+    .game-ui {
+        padding: 0.3rem;
+    }
+    
     .game-header {
-        flex-direction: column;
-        gap: 0.5rem;
+        flex-direction: row;
+        gap: 0.3rem;
+        margin-bottom: 0.3rem;
     }
     
     .game-header h1 {
-        font-size: 1.1rem;
-        margin: 0;
+        font-size: 1rem;
+        margin: 0 0.3rem;
+    }
+    
+    .back-btn, .fullscreen-btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
     }
     
     .game-stats {
-        width: 100%;
-        justify-content: space-around;
+        font-size: 0.8rem;
     }
     
     .game-controls {
-        flex-direction: column;
-        align-items: center;
+        padding: 0.3rem;
+        gap: 0.3rem;
     }
     
     .game-controls .btn {
-        width: 80%;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .game-instructions {
+        padding: 0.3rem;
+        font-size: 0.7rem;
+    }
+    
+    .tiger {
+        font-size: 2rem;
+    }
+    
+    .volleyball {
+        font-size: 1.3rem;
+    }
+    
+    .game-over {
+        padding: 0.8rem;
+        width: 90%;
+    }
+    
+    .game-over h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
     }
 }
