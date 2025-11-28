@@ -15,6 +15,7 @@ class TigerVolleyballGame {
         this.gameWidth = this.gameArea.offsetWidth;
         this.gameHeight = this.gameArea.offsetHeight;
         this.tigerWidth = this.tiger.offsetWidth;
+        this.tigerHeight = 60; // 老虎的默认高度
         
         this.score = 0;
         this.lives = 3;
@@ -24,6 +25,7 @@ class TigerVolleyballGame {
         this.animationId = null;
         this.lastSpawnTime = 0;
         this.spawnInterval = 1000; // 初始生成间隔(ms)
+        this.lastTimestamp = 0; // 记录上一帧的时间戳
         
         this.tigerPosition = this.gameWidth / 2;
         this.tiger.style.left = `${this.tigerPosition}px`;
@@ -82,7 +84,8 @@ class TigerVolleyballGame {
             this.gamePaused = false;
             this.startBtn.disabled = true;
             this.pauseBtn.disabled = false;
-            this.gameLoop();
+            this.lastTimestamp = performance.now(); // 重置时间戳
+            this.gameLoop(this.lastTimestamp);
         }
     }
     
@@ -91,7 +94,8 @@ class TigerVolleyballGame {
         this.pauseBtn.textContent = this.gamePaused ? '继续' : '暂停';
         
         if (!this.gamePaused) {
-            this.gameLoop();
+            this.lastTimestamp = performance.now(); // 重置时间戳以避免时间跳跃
+            this.gameLoop(this.lastTimestamp);
         }
     }
     
@@ -111,6 +115,7 @@ class TigerVolleyballGame {
         this.spawnInterval = 1000;
         this.gameRunning = true;
         this.gamePaused = false;
+        this.lastTimestamp = performance.now(); // 重置时间戳
         
         // 重置老虎大小
         this.tiger.style.fontSize = '3rem';
@@ -127,15 +132,18 @@ class TigerVolleyballGame {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
         }
-        this.gameLoop();
+        this.gameLoop(this.lastTimestamp);
     }
     
     gameLoop(timestamp) {
         if (!this.gameRunning) return;
         
         if (!this.gamePaused) {
+            // 计算时间差，避免暂停后的时间跳跃
+            const deltaTime = timestamp - this.lastTimestamp;
+            this.lastTimestamp = timestamp;
+            
             // 生成排球
-            if (!timestamp) timestamp = 0;
             if (timestamp - this.lastSpawnTime > this.spawnInterval) {
                 this.spawnVolleyball();
                 this.lastSpawnTime = timestamp;
@@ -144,8 +152,8 @@ class TigerVolleyballGame {
                 this.spawnInterval = Math.max(200, 1000 - Math.floor(this.score / 5) * 50);
             }
             
-            // 更新排球位置
-            this.updateVolleyballs();
+            // 更新排球位置（使用deltaTime确保速度稳定）
+            this.updateVolleyballs(deltaTime);
             
             // 检查碰撞
             this.checkCollisions();
@@ -173,10 +181,13 @@ class TigerVolleyballGame {
         });
     }
     
-    updateVolleyballs() {
+    updateVolleyballs(deltaTime) {
+        // 使用 deltaTime 来确保稳定的移动速度，不受帧率影响
+        const speedFactor = Math.min(deltaTime / 16, 3); // 基准是60fps(约16ms)，限制最大倍数
+        
         for (let i = this.volleyballs.length - 1; i >= 0; i--) {
             const ball = this.volleyballs[i];
-            ball.y += ball.speed;
+            ball.y += ball.speed * speedFactor;
             ball.element.style.top = `${ball.y}px`;
             
             // 如果排球超出屏幕底部，移除并扣血
@@ -189,11 +200,21 @@ class TigerVolleyballGame {
     }
     
     checkCollisions() {
-        const tigerRect = {
-            left: this.tigerPosition,
-            right: this.tigerPosition + this.tigerWidth,
-            top: this.gameHeight - 60, // 老虎大约高度
-            bottom: this.gameHeight
+        // 获取老虎当前的实际尺寸
+        const tigerRect = this.tiger.getBoundingClientRect();
+        const gameAreaRect = this.gameArea.getBoundingClientRect();
+        
+        // 计算老虎相对于游戏区域的坐标
+        const tigerLeft = tigerRect.left - gameAreaRect.left;
+        const tigerRight = tigerLeft + tigerRect.width;
+        const tigerTop = tigerRect.top - gameAreaRect.top;
+        const tigerBottom = tigerTop + tigerRect.height;
+        
+        const tigerCollisionRect = {
+            left: tigerLeft,
+            right: tigerRight,
+            top: tigerTop,
+            bottom: tigerBottom
         };
         
         for (let i = this.volleyballs.length - 1; i >= 0; i--) {
@@ -206,10 +227,10 @@ class TigerVolleyballGame {
             };
             
             // 简单的矩形碰撞检测
-            if (ballRect.left < tigerRect.right &&
-                ballRect.right > tigerRect.left &&
-                ballRect.top < tigerRect.bottom &&
-                ballRect.bottom > tigerRect.top) {
+            if (ballRect.left < tigerCollisionRect.right &&
+                ballRect.right > tigerCollisionRect.left &&
+                ballRect.top < tigerCollisionRect.bottom &&
+                ballRect.bottom > tigerCollisionRect.top) {
                 
                 // 接球反馈
                 this.showCatchFeedback(ball.x, ball.y);
@@ -228,8 +249,11 @@ class TigerVolleyballGame {
                 this.score += 1;
                 this.updateUI();
                 
-                // 更新老虎大小（每分线性增长）
+                // 更新老虎大小
                 this.updateTigerSize();
+                
+                // 更新老虎的宽度（因为大小改变了）
+                this.tigerWidth = this.tiger.offsetWidth;
             }
         }
     }
