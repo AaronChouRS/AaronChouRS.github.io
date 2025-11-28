@@ -1,0 +1,228 @@
+/* 合成虎子哥游戏样式 */
+
+.game-container {
+    max-width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-ui {
+    padding: 0.5rem;
+    background-color: #4a69bd;
+    color: white;
+    flex-shrink: 0;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.game-header h1 {
+    font-size: 1.2rem;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0 0.5rem;
+}
+
+.back-btn, .fullscreen-btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.game-area {
+    flex: 1;
+    background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.preview-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 0, 0, 0.5);
+    z-index: 5;
+}
+
+.preview-ball {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    user-select: none;
+    pointer-events: none;
+    text-align: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+    line-height: 60px;
+}
+
+.game-ball {
+    position: absolute;
+    border-radius: 50%;
+    user-select: none;
+    z-index: 15;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.game-controls {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.game-controls .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 100;
+    min-width: 200px;
+    width: 80%;
+    max-width: 300px;
+}
+
+.game-over h2 {
+    margin-bottom: 1rem;
+    color: #4a69bd;
+    font-size: 1.5rem;
+}
+
+.game-instructions {
+    padding: 0.5rem;
+    text-align: center;
+    background-color: #e9ecef;
+    font-size: 0.8rem;
+    color: #495057;
+    flex-shrink: 0;
+}
+
+/* 游戏物品样式 */
+.item-0 { /* 绿茶 */ color: #2E8B57; }
+.item-1 { /* 椰子 */ color: #F5DEB3; }
+.item-2 { /* 王冠 */ color: #FFD700; }
+.item-3 { /* 蛋 */ color: #FFFFFF; }
+.item-4 { /* 鹅 */ color: #FFFFFF; }
+.item-5 { /* 羊 */ color: #F0F0F0; }
+.item-6 { /* 光头 */ color: #FFCC99; }
+.item-7 { /* 熊 */ color: #8B4513; }
+.item-8 { /* 虎 */ color: #FF8C00; }
+
+/* 合成动画 */
+.merge-animation {
+    animation: mergeScale 0.5s ease-out;
+}
+
+@keyframes mergeScale {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .game-header h1 {
+        font-size: 1.1rem;
+    }
+    
+    .game-stats {
+        font-size: 0.9rem;
+    }
+    
+    .game-over {
+        padding: 1rem;
+        width: 85%;
+    }
+    
+    .game-over h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-ui {
+        padding: 0.3rem;
+    }
+    
+    .game-header {
+        flex-direction: row;
+        gap: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .game-header h1 {
+        font-size: 1rem;
+        margin: 0 0.3rem;
+    }
+    
+    .back-btn, .fullscreen-btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .game-stats {
+        font-size: 0.8rem;
+    }
+    
+    .game-controls {
+        padding: 0.3rem;
+        gap: 0.3rem;
+    }
+    
+    .game-controls .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .game-instructions {
+        padding: 0.3rem;
+        font-size: 0.7rem;
+    }
+    
+    .game-over {
+        padding: 0.8rem;
+        width: 90%;
+    }
+    
+    .game-over h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+}
