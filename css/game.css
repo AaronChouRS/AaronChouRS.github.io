@@ -1,0 +1,201 @@
+/* 游戏专用样式 */
+
+.game-container {
+    max-width: 100%;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+.game-ui {
+    padding: 1rem;
+    background-color: #4a69bd;
+    color: white;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.game-header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0 1rem;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.game-area {
+    flex: 1;
+    background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.tiger {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    user-select: none;
+    z-index: 10;
+    transition: left 0.1s ease-out;
+}
+
+.volleyball {
+    position: absolute;
+    font-size: 2rem;
+    user-select: none;
+    z-index: 5;
+    transition: top 0.05s linear;
+}
+
+.game-controls {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    background-color: #f8f9fa;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 100;
+    min-width: 250px;
+}
+
+.game-over h2 {
+    margin-bottom: 1rem;
+    color: #4a69bd;
+}
+
+.game-instructions {
+    padding: 0.5rem 1rem;
+    text-align: center;
+    background-color: #e9ecef;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+/* 普通接球反馈动画 */
+.catch-feedback {
+    position: absolute;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 20;
+    animation: catchAnimation 0.8s forwards;
+    opacity: 0.8;
+}
+
+@keyframes catchAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* 完美接球反馈动画 */
+.perfect-catch {
+    position: absolute;
+    color: gold;
+    font-weight: bold;
+    font-size: 1.5rem;
+    pointer-events: none;
+    z-index: 20;
+    animation: perfectCatchAnimation 1.5s forwards;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+@keyframes perfectCatchAnimation {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-30px) scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-60px) scale(2);
+        opacity: 0;
+    }
+}
+
+/* 老虎接球动画 */
+.tiger.catch {
+    animation: tigerCatch 0.3s ease;
+}
+
+@keyframes tigerCatch {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.1); }
+    100% { transform: translateX(-50%) scale(1); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .game-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .game-stats {
+        font-size: 1rem;
+    }
+    
+    .tiger {
+        font-size: 2.5rem;
+    }
+    
+    .volleyball {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .game-header h1 {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    
+    .game-stats {
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-controls .btn {
+        width: 80%;
+    }
+}

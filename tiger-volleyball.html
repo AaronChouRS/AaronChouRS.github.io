@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>虎子哥接排球 - Aaron's Tools</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a69bd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Aaron's Tools">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-ui">
+            <div class="game-header">
+                <button class="back-btn" onclick="location.href='index.html'">← 返回</button>
+                <h1>老虎接排球</h1>
+                <button class="fullscreen-btn" id="toggleFullscreen">□ 全屏</button>
+            </div>
+            
+            <div class="game-stats">
+                <div class="score">得分: <span id="score">0</span></div>
+                <div class="lives">生命: <span id="lives">❤️❤️❤️</span></div>
+            </div>
+        </div>
+        
+        <div class="game-area" id="gameArea">
+            <div class="tiger" id="tiger">🐯</div>
+            <!-- 排球将在这里动态生成 -->
+        </div>
+        
+        <div class="game-controls">
+            <button class="btn" id="startBtn">开始游戏</button>
+            <button class="btn" id="pauseBtn" disabled>暂停</button>
+        </div>
+        
+        <div class="game-over" id="gameOver" style="display: none;">
+            <h2>游戏结束</h2>
+            <p>最终得分: <span id="finalScore">0</span></p>
+            <button class="btn" id="restartBtn">重新开始</button>
+            <button class="btn" onclick="location.href='index.html'">返回主页</button>
+        </div>
+        
+        <div class="game-instructions">
+            <p>使用鼠标或手指滑动控制小老虎左右移动接排球</p>
+            <p>正下方接球得5分，普通接球得1分</p>
+        </div>
+    </div>
+
+    <script src="js/tiger-volleyball.js"></script>
+</body>
+</html>
