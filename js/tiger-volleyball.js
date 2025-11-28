@@ -228,7 +228,7 @@ class TigerVolleyballGame {
                 this.score += 1;
                 this.updateUI();
                 
-                // 更新老虎大小
+                // 更新老虎大小（每分线性增长）
                 this.updateTigerSize();
             }
         }
@@ -253,8 +253,8 @@ class TigerVolleyballGame {
     }
     
     updateTigerSize() {
-        // 根据得分调整老虎大小，每10分增加0.2rem，最大5rem
-        const newSize = Math.min(3 + Math.floor(this.score / 10) * 0.2, 5);
+        // 根据得分线性调整老虎大小，每分增加0.05rem，最大5rem
+        const newSize = Math.min(3 + this.score * 0.05, 5);
         this.tiger.style.fontSize = `${newSize}rem`;
         this.tigerWidth = this.tiger.offsetWidth; // 更新老虎宽度
     }
