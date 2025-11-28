@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <!-- volleyball.html (修改head部分) -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,12 @@
     <link rel="stylesheet" href="css/fullscreen.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a69bd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="裁判工具">
 </head>
+
 <body>
     <div class="app-container">
         <!-- 正常模式界面 -->
@@ -34,7 +40,7 @@
                             <button class="btn subtract-point" data-team="home">-1分</button>
                         </div>
                     </div>
-                    
+
                     <div class="set-info">
                         <div class="sets">
                             <span>局数:</span>
@@ -46,7 +52,7 @@
                             <span>客队局分: <span id="guestSets">0</span></span>
                         </div>
                     </div>
-                    
+
                     <div class="team guest-team">
                         <h2>客队</h2>
                         <div class="score" id="guestScore">0</div>
@@ -109,7 +115,7 @@
         </div>
 
         <!-- volleyball.html (修改全屏模式部分) -->
-<!-- 替换原来的全屏模式代码为以下内容 -->
+        <!-- 替换原来的全屏模式代码为以下内容 -->
         <!-- 全屏展示模式界面 -->
         <div class="fullscreen-mode" id="fullscreenMode" style="display: none;">
             <div class="fullscreen-header">
@@ -120,14 +126,14 @@
                     <div class="fullscreen-team-name">主队</div>
                     <div class="fullscreen-score" id="fsHomeScore">0</div>
                 </div>
-                
+
                 <div class="fullscreen-set-info">
                     <div class="fullscreen-current-set">第<span id="fsCurrentSet">1</span>局</div>
                     <div class="fullscreen-set-score">
                         <span id="fsHomeSets">0</span> - <span id="fsGuestSets">0</span>
                     </div>
                 </div>
-                
+
                 <div class="fullscreen-team guest-team">
                     <div class="fullscreen-team-name">客队</div>
                     <div class="fullscreen-score" id="fsGuestScore">0</div>
@@ -144,4 +150,5 @@
 
     <script src="volleyball.js"></script>
 </body>
+
 </html>

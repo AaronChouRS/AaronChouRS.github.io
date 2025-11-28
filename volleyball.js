@@ -17,6 +17,11 @@ class VolleyballRefereeAssistant {
         this.bindEvents();
         this.loadFromStorage();
         this.updateDisplay();
+        
+        // 监听全屏状态变化
+        document.addEventListener('fullscreenchange', this.handleFullscreenChange.bind(this));
+        document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange.bind(this));
+        document.addEventListener('msfullscreenchange', this.handleFullscreenChange.bind(this));
     }
     
     initElements() {
@@ -116,23 +121,69 @@ class VolleyballRefereeAssistant {
         });
     }
     
+    handleFullscreenChange() {
+        if (!document.fullscreenElement && 
+            !document.webkitFullscreenElement && 
+            !document.msFullscreenElement) {
+            // 用户手动退出全屏时同步状态
+            this.isFullscreen = false;
+            this.normalModeEl.style.display = 'block';
+            this.fullscreenModeEl.style.display = 'none';
+            this.updateDisplay();
+        }
+    }
+    
+    enterFullscreenAPI() {
+        const elem = document.documentElement;
+        
+        // 尝试不同浏览器的全屏API
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(err => {
+                console.log('无法进入全屏模式: ', err);
+            });
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+            elem.msRequestFullscreen();
+        }
+        
+        // 锁定屏幕方向为横向
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(err => {
+                console.log('无法锁定屏幕方向: ', err);
+            });
+        }
+    }
+    
+    exitFullscreenAPI() {
+        // 退出全屏API
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => {
+                console.log('退出全屏失败: ', err);
+            });
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
+        
+        // 解锁屏幕方向
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
+    }
+    
     toggleFullscreen() {
         this.isFullscreen = !this.isFullscreen;
         this.normalModeEl.style.display = this.isFullscreen ? 'none' : 'block';
         this.fullscreenModeEl.style.display = this.isFullscreen ? 'flex' : 'none';
         
         if (this.isFullscreen) {
-            // 进入全屏时尝试锁定屏幕方向为横向
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => {
-                    console.log('无法锁定屏幕方向: ', err);
-                });
-            }
+            // 尝试使用Fullscreen API
+            this.enterFullscreenAPI();
         } else {
-            // 退出全屏时解锁屏幕方向
-            if (screen.orientation && screen.orientation.unlock) {
-                screen.orientation.unlock();
-            }
+            // 退出全屏模式
+            this.exitFullscreenAPI();
         }
         
         this.updateDisplay();
@@ -347,4 +398,11 @@ class VolleyballRefereeAssistant {
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
     new VolleyballRefereeAssistant();
+    
+    // 注册Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(error => console.log('SW registration failed'));
+    }
 });
