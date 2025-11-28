@@ -1,4 +1,8 @@
-// app.js
+// js/volleyball.js
+import FullscreenManager from './modules/fullscreen.js';
+import StorageManager from './modules/storage.js';
+import TimerManager from './modules/timer.js';
+
 class VolleyballRefereeAssistant {
     constructor() {
         this.homeScore = 0;
@@ -8,39 +12,61 @@ class VolleyballRefereeAssistant {
         this.guestSets = 0;
         this.homeTimeouts = 0;
         this.guestTimeouts = 0;
-        this.isTimerRunning = false;
-        this.timerInterval = null;
-        this.secondsLeft = 0;
+        
+        this.fullscreenManager = new FullscreenManager();
+        this.timerManager = new TimerManager(
+            (seconds) => this.updateTimerDisplay(seconds),
+            () => alert('时间到！')
+        );
         
         this.initElements();
         this.bindEvents();
         this.loadFromStorage();
         this.updateDisplay();
+        
+        document.addEventListener('fullscreenchange', () => 
+            this.fullscreenManager.handleFullscreenChange(() => this.onExitFullscreen()));
+        document.addEventListener('webkitfullscreenchange', () => 
+            this.fullscreenManager.handleFullscreenChange(() => this.onExitFullscreen()));
+        document.addEventListener('msfullscreenchange', () => 
+            this.fullscreenManager.handleFullscreenChange(() => this.onExitFullscreen()));
     }
     
     initElements() {
-        // 比分元素
+        this.normalModeEl = document.getElementById('normalMode');
+        this.fullscreenModeEl = document.getElementById('fullscreenMode');
+        
         this.homeScoreEl = document.getElementById('homeScore');
         this.guestScoreEl = document.getElementById('guestScore');
         this.currentSetEl = document.getElementById('currentSet');
         this.homeSetsEl = document.getElementById('homeSets');
         this.guestSetsEl = document.getElementById('guestSets');
         
-        // 按钮元素
+        this.fsHomeScoreEl = document.getElementById('fsHomeScore');
+        this.fsGuestScoreEl = document.getElementById('fsGuestScore');
+        this.fsCurrentSetEl = document.getElementById('fsCurrentSet');
+        this.fsHomeSetsEl = document.getElementById('fsHomeSets');
+        this.fsGuestSetsEl = document.getElementById('fsGuestSets');
+        
         this.addPointBtns = document.querySelectorAll('.add-point');
         this.subtractPointBtns = document.querySelectorAll('.subtract-point');
         this.nextSetBtn = document.getElementById('nextSet');
         this.resetMatchBtn = document.getElementById('resetMatch');
         this.switchSidesBtn = document.getElementById('switchSides');
         
-        // 暂停相关元素
+        this.toggleFullscreenBtn = document.getElementById('toggleFullscreen');
+        this.exitFullscreenBtn = document.getElementById('exitFullscreen');
+        this.fsHomePointBtn = document.getElementById('fsHomePoint');
+        this.fsHomePointSubtractBtn = document.getElementById('fsHomePointSubtract');
+        this.fsGuestPointBtn = document.getElementById('fsGuestPoint');
+        this.fsGuestPointSubtractBtn = document.getElementById('fsGuestPointSubtract');
+        
         this.timeoutHomeBtn = document.getElementById('timeoutHome');
         this.timeoutGuestBtn = document.getElementById('timeoutGuest');
         this.technicalTimeoutBtn = document.getElementById('technicalTimeout');
         this.homeTimeoutsEl = document.getElementById('homeTimeouts');
         this.guestTimeoutsEl = document.getElementById('guestTimeouts');
         
-        // 计时器元素
         this.timerDisplayEl = document.getElementById('timer');
         this.startTimerBtn = document.getElementById('startTimer');
         this.pauseTimerBtn = document.getElementById('pauseTimer');
@@ -49,7 +75,6 @@ class VolleyballRefereeAssistant {
     }
     
     bindEvents() {
-        // 比分控制事件
         this.addPointBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const team = btn.dataset.team;
@@ -68,22 +93,46 @@ class VolleyballRefereeAssistant {
         this.resetMatchBtn.addEventListener('click', () => this.resetMatch());
         this.switchSidesBtn.addEventListener('click', () => this.switchSides());
         
-        // 暂停事件
+        this.toggleFullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        this.exitFullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        
+        this.fsHomePointBtn.addEventListener('click', () => this.addPoint('home'));
+        this.fsHomePointSubtractBtn.addEventListener('click', () => this.subtractPoint('home'));
+        this.fsGuestPointBtn.addEventListener('click', () => this.addPoint('guest'));
+        this.fsGuestPointSubtractBtn.addEventListener('click', () => this.subtractPoint('guest'));
+        
         this.timeoutHomeBtn.addEventListener('click', () => this.useTimeout('home'));
         this.timeoutGuestBtn.addEventListener('click', () => this.useTimeout('guest'));
         this.technicalTimeoutBtn.addEventListener('click', () => this.callTechnicalTimeout());
         
-        // 计时器事件
-        this.startTimerBtn.addEventListener('click', () => this.startTimer());
-        this.pauseTimerBtn.addEventListener('click', () => this.pauseTimer());
-        this.resetTimerBtn.addEventListener('click', () => this.resetTimer());
+        this.startTimerBtn.addEventListener('click', () => this.timerManager.start());
+        this.pauseTimerBtn.addEventListener('click', () => this.timerManager.pause());
+        this.resetTimerBtn.addEventListener('click', () => {
+            this.timerManager.reset();
+            this.updateTimerDisplay(0);
+        });
         
         this.presetTimerBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const time = parseInt(btn.dataset.time);
-                this.setPresetTime(time);
+                this.timerManager.setPresetTime(time);
+                this.updateTimerDisplay(time);
             });
         });
+    }
+    
+    onExitFullscreen() {
+        this.normalModeEl.style.display = 'block';
+        this.fullscreenModeEl.style.display = 'none';
+        this.updateDisplay();
+    }
+    
+    toggleFullscreen() {
+        const isFullscreen = this.fullscreenManager.toggleFullscreen(
+            this.normalModeEl, 
+            this.fullscreenModeEl
+        );
+        this.updateDisplay();
     }
     
     addPoint(team) {
@@ -111,9 +160,7 @@ class VolleyballRefereeAssistant {
     
     checkSetEnd() {
         const setPoint = this.currentSet === 5 ? 15 : 25;
-        const winThreshold = this.currentSet === 5 ? 2 : 2; // 决胜局需领先2分，其他局也是
         
-        // 检查是否达到赛点
         if ((this.homeScore >= setPoint || this.guestScore >= setPoint) && 
             Math.abs(this.homeScore - this.guestScore) >= 2) {
             
@@ -128,14 +175,17 @@ class VolleyballRefereeAssistant {
     }
     
     endSet() {
-        // 检查比赛是否结束
         if (this.homeSets >= 3 || this.guestSets >= 3) {
-            alert(`比赛结束! ${this.homeSets > this.guestSets ? '主队' : '客队'} 获胜!`);
+            setTimeout(() => {
+                alert(`比赛结束! ${this.homeSets > this.guestSets ? '主队' : '客队'} 获胜!`);
+            }, 100);
             this.resetMatch();
             return;
         }
         
-        alert(`第${this.currentSet}局结束! 即将开始下一局。`);
+        setTimeout(() => {
+            alert(`第${this.currentSet}局结束! 即将开始下一局。`);
+        }, 100);
         this.currentSet++;
         this.homeScore = 0;
         this.guestScore = 0;
@@ -176,12 +226,10 @@ class VolleyballRefereeAssistant {
     
     callTechnicalTimeout() {
         alert('技术暂停');
-        // 这里可以添加更多技术暂停逻辑
     }
     
     switchSides() {
         alert('交换场地');
-        // 可以添加交换场地的视觉效果或通知
     }
     
     resetMatch() {
@@ -196,49 +244,15 @@ class VolleyballRefereeAssistant {
         this.guestSets = 0;
         this.homeTimeouts = 0;
         this.guestTimeouts = 0;
-        this.resetTimer();
+        this.timerManager.reset();
+        this.updateTimerDisplay(0);
         
         this.updateDisplay();
         this.saveToStorage();
     }
     
-    // 计时器功能
-    startTimer() {
-        if (this.isTimerRunning) return;
-        
-        this.isTimerRunning = true;
-        this.timerInterval = setInterval(() => {
-            if (this.secondsLeft > 0) {
-                this.secondsLeft--;
-                this.updateTimerDisplay();
-            } else {
-                this.pauseTimer();
-                alert('时间到！');
-            }
-        }, 1000);
-    }
-    
-    pauseTimer() {
-        this.isTimerRunning = false;
-        clearInterval(this.timerInterval);
-    }
-    
-    resetTimer() {
-        this.pauseTimer();
-        this.secondsLeft = 0;
-        this.updateTimerDisplay();
-    }
-    
-    setPresetTime(seconds) {
-        this.pauseTimer();
-        this.secondsLeft = seconds;
-        this.updateTimerDisplay();
-    }
-    
-    updateTimerDisplay() {
-        const minutes = Math.floor(this.secondsLeft / 60);
-        const seconds = this.secondsLeft % 60;
-        this.timerDisplayEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    updateTimerDisplay(seconds) {
+        this.timerDisplayEl.textContent = this.timerManager.formatTime(seconds);
     }
     
     updateDisplay() {
@@ -249,6 +263,14 @@ class VolleyballRefereeAssistant {
         this.guestSetsEl.textContent = this.guestSets;
         this.homeTimeoutsEl.textContent = this.homeTimeouts;
         this.guestTimeoutsEl.textContent = this.guestTimeouts;
+        
+        if (this.fullscreenManager.isFullscreen) {
+            this.fsHomeScoreEl.textContent = this.homeScore;
+            this.fsGuestScoreEl.textContent = this.guestScore;
+            this.fsCurrentSetEl.textContent = this.currentSet;
+            this.fsHomeSetsEl.textContent = this.homeSets;
+            this.fsGuestSetsEl.textContent = this.guestSets;
+        }
     }
     
     saveToStorage() {
@@ -261,34 +283,29 @@ class VolleyballRefereeAssistant {
             homeTimeouts: this.homeTimeouts,
             guestTimeouts: this.guestTimeouts
         };
-        localStorage.setItem('volleyballRefereeData', JSON.stringify(data));
+        StorageManager.saveGameData(data);
     }
     
     loadFromStorage() {
-        const data = localStorage.getItem('volleyballRefereeData');
+        const data = StorageManager.loadGameData();
         if (data) {
-            const parsed = JSON.parse(data);
-            this.homeScore = parsed.homeScore || 0;
-            this.guestScore = parsed.guestScore || 0;
-            this.currentSet = parsed.currentSet || 1;
-            this.homeSets = parsed.homeSets || 0;
-            this.guestSets = parsed.guestSets || 0;
-            this.homeTimeouts = parsed.homeTimeouts || 0;
-            this.guestTimeouts = parsed.guestTimeouts || 0;
+            this.homeScore = data.homeScore || 0;
+            this.guestScore = data.guestScore || 0;
+            this.currentSet = data.currentSet || 1;
+            this.homeSets = data.homeSets || 0;
+            this.guestSets = data.guestSets || 0;
+            this.homeTimeouts = data.homeTimeouts || 0;
+            this.guestTimeouts = data.guestTimeouts || 0;
         }
     }
 }
 
-// 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
     new VolleyballRefereeAssistant();
-});
-
-// 添加PWA支持
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
             .then(registration => console.log('SW registered'))
             .catch(error => console.log('SW registration failed'));
-    });
-}
+    }
+});

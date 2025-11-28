@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'referee-tools-v1';
+const CACHE_NAME = 'aarons-tools-v1';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,7 +9,11 @@ const urlsToCache = [
   '/css/components.css',
   '/css/fullscreen.css',
   '/css/responsive.css',
-  '/volleyball.js'
+  '/js/app.js',
+  '/js/volleyball.js',
+  '/js/modules/fullscreen.js',
+  '/js/modules/storage.js',
+  '/js/modules/timer.js'
 ];
 
 self.addEventListener('install', event => {

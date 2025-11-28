@@ -1,4 +1,3 @@
-/* css/fullscreen.css */
 /* 全屏模式样式 */
 
 .fullscreen-mode {
@@ -54,14 +53,14 @@
 }
 
 .fullscreen-team-name {
-    font-size: 1.8rem;
+    font-size: 2.5rem;
     color: white;
     margin-bottom: 1rem;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .fullscreen-score {
-    font-size: 6rem;
+    font-size: 10rem;
     font-weight: bold;
     color: white;
     text-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -76,32 +75,45 @@
 }
 
 .fullscreen-current-set {
-    font-size: 1.3rem;
+    font-size: 2rem;
     margin-bottom: 0.5rem;
 }
 
 .fullscreen-set-score {
-    font-size: 1.8rem;
+    font-size: 2.5rem;
     font-weight: bold;
 }
 
-/* css/fullscreen.css (追加修改) */
+.fullscreen-controls {
+    display: flex;
+    justify-content: space-around;
+    padding: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    flex-shrink: 0;
+}
+
 .fs-control-btn {
     background: rgba(255,255,255,0.2);
     color: white;
     border: 2px solid white;
-    padding: 1rem 1.5rem;
-    font-size: 1.2rem;
-    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    font-size: 1.5rem;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 150px;
+    min-height: 80px;
     flex: 1;
-    max-width: 45%;
+    max-width: 40%;
     position: relative;
     z-index: 1001;
     touch-action: manipulation;
-    user-select: none; /* 防止文本选择影响点击 */
+    user-select: none;
 }
 
 .fs-control-btn:hover {
@@ -116,7 +128,7 @@
 
 /* 为减分按钮添加特殊样式以便区分 */
 .fs-control-btn:nth-child(2n) {
-    background: rgba(255, 100, 100, 0.3); /* 红色系背景表示减分 */
+    background: rgba(255, 100, 100, 0.3);
 }
 
 .fs-control-btn:nth-child(2n):hover {
@@ -130,50 +142,99 @@
     }
     
     .fullscreen-team-name {
-        font-size: 1.5rem;
+        font-size: 2rem;
         margin-bottom: 0.5rem;
     }
     
     .fullscreen-score {
-        font-size: 4rem;
+        font-size: 7rem;
     }
     
     .fullscreen-current-set {
-        font-size: 1.1rem;
-    }
-    
-    .fullscreen-set-score {
         font-size: 1.5rem;
     }
     
+    .fullscreen-set-score {
+        font-size: 2rem;
+    }
+    
+    .fullscreen-controls {
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
     .fs-control-btn {
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-        min-width: 100px;
+        padding: 1rem 1.5rem;
+        font-size: 1.2rem;
+        min-width: 120px;
+        min-height: 60px;
     }
 }
 
 /* 超小横屏设备 */
 @media (orientation: landscape) and (max-height: 400px) {
     .fullscreen-team-name {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
     
     .fullscreen-score {
-        font-size: 3rem;
+        font-size: 5rem;
     }
     
     .fullscreen-current-set {
-        font-size: 1rem;
-    }
-    
-    .fullscreen-set-score {
         font-size: 1.2rem;
     }
     
+    .fullscreen-set-score {
+        font-size: 1.5rem;
+    }
+    
+    .fullscreen-controls {
+        gap: 0.8rem;
+        padding: 0.8rem;
+    }
+    
     .fs-control-btn {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.9rem;
-        min-width: 80px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        min-width: 100px;
+        min-height: 50px;
+    }
+}
+
+/* 竖屏设备优化 */
+@media (orientation: portrait) {
+    .fullscreen-scoreboard {
+        flex-direction: column;
+        padding: 0.5rem;
+    }
+    
+    .fullscreen-score {
+        font-size: 12rem;
+    }
+    
+    .fullscreen-team-name {
+        font-size: 2.5rem;
+    }
+    
+    .fullscreen-current-set {
+        font-size: 2rem;
+    }
+    
+    .fullscreen-set-score {
+        font-size: 2.5rem;
+    }
+    
+    .fullscreen-controls {
+        flex-direction: row;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .fs-control-btn {
+        padding: 1.5rem 2rem;
+        font-size: 1.5rem;
+        min-width: 150px;
+        min-height: 80px;
     }
 }
