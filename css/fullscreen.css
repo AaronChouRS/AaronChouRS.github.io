@@ -1,0 +1,169 @@
+/* css/fullscreen.css */
+/* 全屏模式样式 */
+
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    touch-action: manipulation;
+}
+
+.fullscreen-header {
+    padding: 1rem;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.exit-fullscreen {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fullscreen-scoreboard {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 1rem;
+    min-height: 0;
+}
+
+.fullscreen-team {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fullscreen-team-name {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.fullscreen-score {
+    font-size: 6rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    margin: 0.5rem 0;
+}
+
+.fullscreen-set-info {
+    text-align: center;
+    color: white;
+    padding: 1rem;
+    flex-shrink: 0;
+}
+
+.fullscreen-current-set {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.fullscreen-set-score {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.fullscreen-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 1rem;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.fs-control-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid white;
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    flex: 1;
+    max-width: 45%;
+}
+
+.fs-control-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+/* 横屏特殊处理 */
+@media (orientation: landscape) and (max-height: 500px) {
+    .fullscreen-scoreboard {
+        padding: 0.5rem;
+    }
+    
+    .fullscreen-team-name {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .fullscreen-score {
+        font-size: 4rem;
+    }
+    
+    .fullscreen-current-set {
+        font-size: 1.1rem;
+    }
+    
+    .fullscreen-set-score {
+        font-size: 1.5rem;
+    }
+    
+    .fs-control-btn {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        min-width: 100px;
+    }
+}
+
+/* 超小横屏设备 */
+@media (orientation: landscape) and (max-height: 400px) {
+    .fullscreen-team-name {
+        font-size: 1.2rem;
+    }
+    
+    .fullscreen-score {
+        font-size: 3rem;
+    }
+    
+    .fullscreen-current-set {
+        font-size: 1rem;
+    }
+    
+    .fullscreen-set-score {
+        font-size: 1.2rem;
+    }
+    
+    .fs-control-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+}

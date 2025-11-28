@@ -1,0 +1,79 @@
+/* css/responsive.css */
+/* 响应式样式 */
+
+@media (max-width: 768px) {
+    .scoreboard {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .team {
+        width: 100%;
+    }
+    
+    .score {
+        font-size: 3rem;
+    }
+    
+    .set-info {
+        order: -1;
+        width: 100%;
+        padding: 0;
+    }
+    
+    .timer-display {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .fullscreen-score {
+        font-size: 6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 0.5rem;
+    }
+    
+    .scoreboard, .control-panel, .rules-reference {
+        padding: 1rem;
+    }
+    
+    .score {
+        font-size: 2.5rem;
+    }
+    
+    .timer-controls, .buttons-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .fullscreen-score {
+        font-size: 5rem;
+    }
+    
+    .fullscreen-team-name {
+        font-size: 1.5rem;
+    }
+    
+    .fullscreen-controls {
+        padding: 1rem;
+    }
+    
+    .fs-control-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.2rem;
+    }
+}

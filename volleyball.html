@@ -1,11 +1,16 @@
 <!-- volleyball.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
+<!-- volleyball.html (修改head部分) -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排球裁判工具</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/fullscreen.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -103,6 +108,8 @@
             </main>
         </div>
 
+        <!-- volleyball.html (修改全屏模式部分) -->
+<!-- 替换原来的全屏模式代码为以下内容 -->
         <!-- 全屏展示模式界面 -->
         <div class="fullscreen-mode" id="fullscreenMode" style="display: none;">
             <div class="fullscreen-header">
@@ -128,7 +135,9 @@
             </div>
             <div class="fullscreen-controls">
                 <button class="fs-control-btn" id="fsHomePoint">主队+1</button>
+                <button class="fs-control-btn" id="fsHomePointSubtract">主队-1</button>
                 <button class="fs-control-btn" id="fsGuestPoint">客队+1</button>
+                <button class="fs-control-btn" id="fsGuestPointSubtract">客队-1</button>
             </div>
         </div>
     </div>

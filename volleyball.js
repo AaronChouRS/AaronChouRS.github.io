@@ -49,7 +49,9 @@ class VolleyballRefereeAssistant {
         this.toggleFullscreenBtn = document.getElementById('toggleFullscreen');
         this.exitFullscreenBtn = document.getElementById('exitFullscreen');
         this.fsHomePointBtn = document.getElementById('fsHomePoint');
+        this.fsHomePointSubtractBtn = document.getElementById('fsHomePointSubtract');
         this.fsGuestPointBtn = document.getElementById('fsGuestPoint');
+        this.fsGuestPointSubtractBtn = document.getElementById('fsGuestPointSubtract');
         
         // 暂停相关元素
         this.timeoutHomeBtn = document.getElementById('timeoutHome');
@@ -92,7 +94,9 @@ class VolleyballRefereeAssistant {
         
         // 全屏模式控制
         this.fsHomePointBtn.addEventListener('click', () => this.addPoint('home'));
+        this.fsHomePointSubtractBtn.addEventListener('click', () => this.subtractPoint('home'));
         this.fsGuestPointBtn.addEventListener('click', () => this.addPoint('guest'));
+        this.fsGuestPointSubtractBtn.addEventListener('click', () => this.subtractPoint('guest'));
         
         // 暂停事件
         this.timeoutHomeBtn.addEventListener('click', () => this.useTimeout('home'));
@@ -116,6 +120,21 @@ class VolleyballRefereeAssistant {
         this.isFullscreen = !this.isFullscreen;
         this.normalModeEl.style.display = this.isFullscreen ? 'none' : 'block';
         this.fullscreenModeEl.style.display = this.isFullscreen ? 'flex' : 'none';
+        
+        if (this.isFullscreen) {
+            // 进入全屏时尝试锁定屏幕方向为横向
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => {
+                    console.log('无法锁定屏幕方向: ', err);
+                });
+            }
+        } else {
+            // 退出全屏时解锁屏幕方向
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+        }
+        
         this.updateDisplay();
     }
     
@@ -144,7 +163,6 @@ class VolleyballRefereeAssistant {
     
     checkSetEnd() {
         const setPoint = this.currentSet === 5 ? 15 : 25;
-        const winThreshold = this.currentSet === 5 ? 2 : 2; // 决胜局需领先2分，其他局也是
         
         // 检查是否达到赛点
         if ((this.homeScore >= setPoint || this.guestScore >= setPoint) && 
